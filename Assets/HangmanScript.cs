@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.Text.RegularExpressions;
 using System.Linq;
-using System;
+using System.Text.RegularExpressions;
 using KModkit;
+using UnityEngine;
 
 public class HangmanScript : MonoBehaviour
 {
@@ -41,12 +40,11 @@ public class HangmanScript : MonoBehaviour
 
     static int moduleIdCounter = 1;
     int moduleId = 0;
+    int encryptionMethod;   // for Souvenir
     public bool isActive = false;
     public bool isSolved = false;
     public bool inAnimation = false;
     public bool organMode = false;
-
-    //Debug.LogFormat("[Encrypted Hangman #{0}] text", moduleId, );
 
     // Use this for initialization
     void Start()
@@ -98,7 +96,7 @@ public class HangmanScript : MonoBehaviour
         uncipheredanswer = answer;
         Debug.LogFormat("[Encrypted Hangman #{0}] Selected module is -{1}- .", moduleId, moduleName);
         Debug.LogFormat("[Encrypted Hangman #{0}] The original message is -{1}- .", moduleId, uncipheredanswer);
-        answer = encrypt(answer, UnityEngine.Random.RandomRange(0,6));
+        answer = encrypt(answer, Random.Range(0,6));
         for (int i = 0; i < hangmanParts.Length; i++)
         {
             hangmanParts[i].GetComponent<MeshRenderer>().enabled = false;
@@ -111,7 +109,6 @@ public class HangmanScript : MonoBehaviour
             organMode = true;
             Debug.LogFormat("[Encrypted Hangman #{0}] There is an Organization on the bomb. You are not restricted of solving this module first. Instances of {1} may be solved. ", moduleId, moduleName);
         }
-
     }
 
     void Awake()
@@ -311,6 +308,7 @@ public class HangmanScript : MonoBehaviour
 
     public string encrypt(string text, int method)
     {
+        encryptionMethod = method;
         switch (method)
         {
             case 0:
