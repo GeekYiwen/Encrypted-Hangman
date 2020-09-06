@@ -1971,11 +1971,33 @@ MonoBehaviour:
   - 7
   - V
   - X
-  notValidModules:
-  - '...?'
-  - 14
-  - 64
-  - "\u2756"
+  hillAlphabet:
+  - Z
+  - A
+  - B
+  - C
+  - D
+  - E
+  - F
+  - G
+  - H
+  - I
+  - J
+  - K
+  - L
+  - M
+  - N
+  - O
+  - P
+  - Q
+  - R
+  - S
+  - T
+  - U
+  - V
+  - W
+  - X
+  - Y
   isQueryed: 0000000000000000000000000000000000000000000000000000
   answer: 
   uncipheredanswer: 

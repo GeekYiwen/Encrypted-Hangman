@@ -31,7 +31,6 @@ public class HangmanScript : MonoBehaviour
     public string[] modernAlphabet = { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"};
     public string[] vigenereAlphabet = {"B", "4", "5", "P", "R", "E", "L", "0", "A", "6", "G", "F", "D", "H", "O", "8", "C", "W", "M", "Q", "Y", "S", "J", "2", "Z", "T", "U", "9", "I", "1", "N", "3", "K", "7", "V", "X"};
     public string[] hillAlphabet = { "Z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y"};
-    public string[] notValidModules = { "...?", "14", "64", "❖", "7", "21" };
     public bool[] isQueryed;
     public string answer;
     public string uncipheredanswer;
@@ -64,16 +63,14 @@ public class HangmanScript : MonoBehaviour
         while (true)
         {
             answer = bombInfo.GetSolvableModuleNames().ElementAt(Random.Range(0, bombInfo.GetSolvableModuleNames().Count() - 1));
-            if ((!bombInfo.GetSolvedModuleNames().Contains(answer) && !notValidModules.Contains(answer))||answer == "Encrypted Hangman")
+
+            if (!bombInfo.GetSolvedModuleNames().Contains(answer) || answer == "Encrypted Hangman")
             {
                 moduleName = answer;
                 break;
             }
-        }
-        /*
-        moduleName = "Partial Derivatives";     //TESTING LINES
-        answer = moduleName;                    //TESTING LINES
-        */
+        }               
+        
         answer = answer.Replace("ü", "u");
         answer = answer.Replace("ä", "a");
         answer = answer.Replace("ö", "o");
@@ -84,31 +81,38 @@ public class HangmanScript : MonoBehaviour
         answer = new string(answer.Where(char.IsLetter).ToArray());
         
         answer = answer.ToUpper();
-        if (ignoredModules.Contains(moduleName.Trim()))
+        if (answer.Length != 0)
         {
-            isIgnored = true;
-            Debug.LogFormat("[Encrypted Hangman #{0}] -{1}- is a ignored Module.", moduleId, moduleName);
+            if (ignoredModules.Contains(moduleName.Trim()))
+            {
+                isIgnored = true;
+                Debug.LogFormat("[Encrypted Hangman #{0}] -{1}- is a ignored Module.", moduleId, moduleName);
+            }
+            if (answer.Length > 24)
+            {
+                additionalLetters.text = "+" + (answer.Length - 24);
+                answer = answer.Substring(0, 24);
+            }
+
+            uncipheredanswer = answer;
+            Debug.LogFormat("[Encrypted Hangman #{0}] Selected module is -{1}- .", moduleId, moduleName);
+            Debug.LogFormat("[Encrypted Hangman #{0}] The original message is -{1}- .", moduleId, uncipheredanswer);
+            answer = encrypt(answer, UnityEngine.Random.RandomRange(0, 6));
+            for (int i = 0; i < hangmanParts.Length; i++)
+            {
+                hangmanParts[i].GetComponent<MeshRenderer>().enabled = false;
+            }
+            currentprogress = generateUnderscoreString(answer.Length);
+            displayCurrentAnswer(currentprogress);
+            Debug.LogFormat("[Encrypted Hangman #{0}] Solution is: {1}", moduleId, answer);
+            if (bombInfo.GetSolvableModuleNames().Contains("Organization"))
+            {
+                organMode = true;
+                Debug.LogFormat("[Encrypted Hangman #{0}] There is an Organization on the bomb. You are not restricted of solving this module first. Instances of {1} may be solved. ", moduleId, moduleName);
+            }
         }
-        if (answer.Length > 24)
-        {
-            additionalLetters.text = "+" + (answer.Length - 24);
-            answer = answer.Substring(0, 24);
-        }
-        uncipheredanswer = answer;
-        Debug.LogFormat("[Encrypted Hangman #{0}] Selected module is -{1}- .", moduleId, moduleName);
-        Debug.LogFormat("[Encrypted Hangman #{0}] The original message is -{1}- .", moduleId, uncipheredanswer);
-        answer = encrypt(answer, UnityEngine.Random.RandomRange(0,6));
-        for (int i = 0; i < hangmanParts.Length; i++)
-        {
-            hangmanParts[i].GetComponent<MeshRenderer>().enabled = false;
-        }
-        currentprogress = generateUnderscoreString(answer.Length);
-        displayCurrentAnswer(currentprogress);
-        Debug.LogFormat("[Encrypted Hangman #{0}] Solution is: {1}", moduleId, answer);
-        if (bombInfo.GetSolvableModuleNames().Contains("Organization"))
-        {
-            organMode = true;
-            Debug.LogFormat("[Encrypted Hangman #{0}] There is an Organization on the bomb. You are not restricted of solving this module first. Instances of {1} may be solved. ", moduleId, moduleName);
+        else {
+            Init();
         }
     }
 
